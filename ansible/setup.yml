@@ -1,0 +1,7 @@
+---
+- hosts: docker_base
+  user: root
+  tasks:
+  - apt: pkg=xauth state=installed
+#We allow X11 forwarding
+  - copy: dest=/root/.Xauthority content="" owner=root group=root mode=0600
