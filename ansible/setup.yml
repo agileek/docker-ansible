@@ -1,7 +1,30 @@
 ---
-- hosts: docker_base
-  user: root
+# First, we build a docker image with your ssh public key in root authorized keys
+- hosts: local
+  vars:
+    temporary_folder_for_building_docker: /tmp/docker
   tasks:
-  - apt: pkg=xauth state=installed
+  - command: rm -rf {{ temporary_folder_for_building_docker }}
+  - file: path={{ temporary_folder_for_building_docker }}  state=directory
+  - template: src=../docker/_Dockerfile dest={{ temporary_folder_for_building_docker }}/Dockerfile
+  - copy: src={{ ssh_private_key }}.pub dest={{ temporary_folder_for_building_docker }}/authorized_keys force=no mode=0644
+  - command: docker build -t developer_base_image /tmp/docker
+  - docker: image=developer_base_image name=developer_base_image_instance state=running env="DISPLAY={{ display }}" publish_all_ports=true volumes="/tmp/.X11-unix:/tmp/.X11-unix"
+  - shell: docker port developer_base_image_instance | grep 22 | sed 's/.*:\([0-9]*\)$/\1/'
+    register: docker_ssh_port
+
+- hosts: docker_base
+  user: developer
+  sudo: yes
+  port: "{{ hostvars['local_docker_builder'].docker_ssh_port.stdout }}"
+  tasks:
+  - name: ensure minimal app apt dependencies are installed
+    action: apt pkg={{item}} state=latest
+    with_items:
+      - python3-software-properties
+      - software-properties-common
+  - command: /usr/bin/add-apt-repository universe
+  - command: /usr/bin/add-apt-repository multiverse
+  - apt: update_cache=yes upgrade=dist
 #We allow X11 forwarding
   - copy: dest=/root/.Xauthority content="" owner=root group=root mode=0600

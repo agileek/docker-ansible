@@ -14,10 +14,7 @@ function check_usage_min_max() {
 }
 
 function launch() {
-  docker run -dti -e DISPLAY -p 22 --name "developer_base_image_instance" -v /tmp/.X11-unix:/tmp/.X11-unix developer_base_image
-  local ssh_port=`docker port developer_base_image_instance | grep 22 | sed 's/.*:\([0-9]*\)$/\1/'`
-
-  ansible-playbook ansible/setup.yml -i ansible/hosts --extra-vars ansible_ssh_port="${ssh_port}"
+  ansible-playbook -vvvv ansible/setup.yml --extra-vars "@vars.yml" --extra-vars display=$DISPLAY -i ansible/hosts
 }
 
 launch

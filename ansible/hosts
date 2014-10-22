@@ -1,2 +1,5 @@
 [docker_base]
-127.0.0.1 ansible_ssh_pass=root
+127.0.0.1
+
+[local]
+local_docker_builder ansible_connection=local
