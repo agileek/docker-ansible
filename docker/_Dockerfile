@@ -14,7 +14,7 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 ADD authorized_keys /root/.ssh/authorized_keys
 
 EXPOSE 22
-CMD ["sudo" "/usr/sbin/sshd", "-D"]
+CMD ["sudo", "/usr/sbin/sshd", "-D"]
 
 # Replace 1000 with your user / group id
 RUN export uid=1000 gid=1000 && \
