@@ -1,7 +1,9 @@
 ## Setup a docker with a SSH server running on a random port and customize it with ansible
 
 ### Prerequisites
-In order for this to work, you must have: 
+Docker >= 1.3.0
+In order for this to work, you must have:
+* docker
 * ansible
 * python-jinja2
 * python-yaml
@@ -17,11 +19,13 @@ For ubuntu, you can copy/paste
 ### Usage
 Copy vars_example.yml in vars.yml and set the parameters
 
-Execute ./launch.sh
+Execute `./launch.sh`
 
-If you don't have the docker image, it will build it for you.
+When the execution is over, you can enter the freshly configured docker with `./enter.sh`
 
-#### What the script does 
+If something goes wrong (Or you want to freshly restart for whatever reason), you can wipe everything with `STOP_AND_DELETE_ALL.sh`
+
+#### What the script does
 
 * build the docker image if you don't have it
  * creates a user developer
@@ -53,7 +57,7 @@ If you have something like that:
 ```
 
 it means that you probably had another system running on port 220.
-To get rid of this message, simply run the ssh-keygen command prompted by the message. In my case, this will be 'ssh-keygen -f "/home/yourhome/.ssh/known_hosts" -R [127.0.0.1]:220', stop your chroot and launch it again.
+To get rid of this message, simply run the ssh-keygen command prompted by the message. In my case, this will be 'ssh-keygen -f "/home/yourhome/.ssh/known_hosts" -R [127.0.0.1]:220', use ./launch again, ansible will continue
 
 
 #### Misc
