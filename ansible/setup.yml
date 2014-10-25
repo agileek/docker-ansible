@@ -10,14 +10,12 @@
   - copy: src={{ ssh_private_key }}.pub dest={{ temporary_folder_for_building_docker }}/authorized_keys force=no mode=0644
   - command: docker build -t developer_base_image /tmp/docker
   - docker: image=developer_base_image name=developer_base_image_instance state=running env="DISPLAY={{ display }}" publish_all_ports=true volumes="/tmp/.X11-unix:/tmp/.X11-unix"
-  - shell: docker port developer_base_image_instance | grep 22 | sed 's/.*:\([0-9]*\)$/\1/'
-    register: docker_ssh_port
-  - wait_for: port={{ docker_ssh_port.stdout }}
+  - wait_for: port={{docker_containers[0]['NetworkSettings']['Ports']['22/tcp'][0]['HostPort']}} delay=1
 
 - hosts: docker_base
   user: developer
   sudo: yes
-  port: "{{ hostvars['local_docker_builder'].docker_ssh_port.stdout }}"
+  port: "{{ hostvars['local_docker_builder'].docker_containers[0]['NetworkSettings']['Ports']['22/tcp'][0]['HostPort'] }}"
   tasks:
   - name: ensure minimal app apt dependencies are installed
     action: apt pkg={{item}} state=latest
