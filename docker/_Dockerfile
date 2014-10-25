@@ -1,12 +1,6 @@
-FROM ubuntu:14.04
+FROM phusion/baseimage:0.9.15
 
-# SSH
-RUN apt-get update && apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
-
-# SSH login fix. Otherwise user is kicked off after login
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-
+RUN apt-get -y update && apt-get -y install python
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
@@ -14,16 +8,20 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 ADD authorized_keys /root/.ssh/authorized_keys
 
 EXPOSE 22
-CMD ["sudo", "/usr/sbin/sshd", "-D"]
 
 # Replace 1000 with your user / group id
 RUN export uid=1000 gid=1000 && \
     mkdir -p /home/developer && \
-    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+    echo "developer:x:${uid}:${gid}:developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
     echo "developer:x:${uid}:" >> /etc/group && \
     echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
     chmod 0440 /etc/sudoers.d/developer && \
     chown ${uid}:${gid} -R /home/developer
 
 USER developer
+
+# ADD SSH PUBLIC KEY TO DEVELOPER
+ADD authorized_keys /home/developer/.ssh/authorized_keys
+
 ENV HOME /home/developer
+CMD ["sudo", "/sbin/my_init"]

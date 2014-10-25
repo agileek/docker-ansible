@@ -12,6 +12,7 @@
   - docker: image=developer_base_image name=developer_base_image_instance state=running env="DISPLAY={{ display }}" publish_all_ports=true volumes="/tmp/.X11-unix:/tmp/.X11-unix"
   - shell: docker port developer_base_image_instance | grep 22 | sed 's/.*:\([0-9]*\)$/\1/'
     register: docker_ssh_port
+  - wait_for: port={{ docker_ssh_port.stdout }}
 
 - hosts: docker_base
   user: developer
