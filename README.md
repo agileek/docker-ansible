@@ -57,7 +57,7 @@ If you have something like that:
 ```
 
 it means that you probably had another system running on port 220.
-To get rid of this message, simply run the ssh-keygen command prompted by the message. In my case, this will be 'ssh-keygen -f "/home/yourhome/.ssh/known_hosts" -R [127.0.0.1]:220', use ./launch again, ansible will continue
+To get rid of this message, simply run the ssh-keygen command prompted by the message. In my case, this will be 'ssh-keygen -f "/home/yourhome/.ssh/known_hosts" -R [127.0.0.1]:220', use `./launch.sh` again, ansible will continue
 
 
 #### Misc
