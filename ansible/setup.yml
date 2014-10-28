@@ -7,9 +7,11 @@
   - command: rm -rf {{ temporary_folder_for_building_docker }}
   - file: path={{ temporary_folder_for_building_docker }}  state=directory
   - template: src=../docker/_Dockerfile dest={{ temporary_folder_for_building_docker }}/Dockerfile
+  - copy: src=../docker/run dest={{ temporary_folder_for_building_docker }}/run
+  - copy: src=../docker/wrapdocker dest={{ temporary_folder_for_building_docker }}/wrapdocker
   - copy: src={{ ssh_private_key }}.pub dest={{ temporary_folder_for_building_docker }}/authorized_keys force=no mode=0644
   - command: docker build -t developer_base_image /tmp/docker
-  - docker: image=developer_base_image name=developer_base_image_instance state=running env="DISPLAY={{ display }}" publish_all_ports=true volumes="/tmp/.X11-unix:/tmp/.X11-unix"
+  - docker: image=developer_base_image name={{ docker_container_name }} privileged=true state=running env="DISPLAY={{ display }}" publish_all_ports=true volumes="/tmp/.X11-unix:/tmp/.X11-unix"
   - wait_for: port={{docker_containers[0]['NetworkSettings']['Ports']['22/tcp'][0]['HostPort']}} delay=1
 
 - hosts: docker_base

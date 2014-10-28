@@ -14,7 +14,7 @@ function check_usage_min_max() {
 }
 
 function launch() {
-  ansible-playbook -vvvv ansible/setup.yml --extra-vars "@vars.yml" --extra-vars display=$DISPLAY -i ansible/hosts
+  ansible-playbook -vvvv ansible/setup.yml --extra-vars "@vars.yml" --extra-vars "display=$DISPLAY docker_container_name=toto" -i ansible/hosts
 }
 
 launch
