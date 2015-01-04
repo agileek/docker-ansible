@@ -1,17 +1,12 @@
 ---
 # First, we build a docker image with your ssh public key in root authorized keys
 - hosts: local
-  vars:
-    temporary_folder_for_building_docker: /tmp/docker
   tasks:
-  - command: rm -rf {{ temporary_folder_for_building_docker }}
-  - file: path={{ temporary_folder_for_building_docker }}  state=directory
-  - template: src=../docker/_Dockerfile dest={{ temporary_folder_for_building_docker }}/Dockerfile
-  - copy: src=../docker/run dest={{ temporary_folder_for_building_docker }}/run
-  - copy: src=../docker/wrapdocker dest={{ temporary_folder_for_building_docker }}/wrapdocker
-  - copy: src={{ ssh_private_key }}.pub dest={{ temporary_folder_for_building_docker }}/authorized_keys force=no mode=0644
-  - command: docker build -t developer_base_image /tmp/docker
-  - docker: image=developer_base_image name={{ docker_container_name }} privileged=true state=running env="DISPLAY={{ display }}" publish_all_ports=true volumes="/tmp/.X11-unix:/tmp/.X11-unix"
+  - shell: rm -rf ../docker/Dockerfile && rm -rf ../docker/authorized_keys
+  - template: src=../docker/_Dockerfile dest=../docker/Dockerfile
+  - copy: src={{ ssh_private_key }}.pub dest=../docker/authorized_keys force=no mode=0644
+  - command: docker build -t developer_base_image ../docker
+  - docker: image=developer_base_image name=developer_instance privileged=true state=running env="DISPLAY={{ display }}" publish_all_ports=true volumes="/tmp/.X11-unix:/tmp/.X11-unix"
   - wait_for: port={{docker_containers[0]['NetworkSettings']['Ports']['22/tcp'][0]['HostPort']}} delay=1
 
 - hosts: docker_base
@@ -24,6 +19,7 @@
     with_items:
       - python3-software-properties
       - software-properties-common
+      - x11-utils
   - command: /usr/bin/add-apt-repository universe
   - command: /usr/bin/add-apt-repository multiverse
   - apt: update_cache=yes upgrade=dist

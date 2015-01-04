@@ -1,11 +1,12 @@
 FROM phusion/baseimage:0.9.15
 
-RUN apt-get -y update && apt-get -y install python
+RUN apt-get -y update && apt-get -y install python && \
+    apt-get clean && \
+	  apt-get autoclean && \
+	  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
-
-# ADD SSH PUBLIC KEY TO ROOT
-ADD authorized_keys /root/.ssh/authorized_keys
 
 EXPOSE 22
 
@@ -17,36 +18,41 @@ RUN apt-get update -qq && apt-get install -qqy \
     iptables
 
 # Install Docker from Docker Inc. repositories.
-RUN echo deb https://get.docker.com/ubuntu docker main > /etc/apt/sources.list.d/docker.list \
-  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9 \
-  && apt-get update -qq \
-  && apt-get install -qqy lxc-docker
-
-# Install the magic wrapper.
-ADD wrapdocker /usr/local/bin/wrapdocker
-RUN chmod +x /usr/local/bin/wrapdocker
+RUN echo deb https://get.docker.com/ubuntu docker main > /etc/apt/sources.list.d/docker.list && \
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9 && \
+  apt-get update -qq && \
+  apt-get install -qqy lxc-docker && \
+  apt-get clean && \
+  apt-get autoclean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Define additional metadata for our image.
 VOLUME /var/lib/docker
 CMD ["sudo", "/usr/local/bin/wrapdocker"]
 RUN mkdir /etc/service/docker
-ADD run /etc/service/docker/run
-RUN chmod +x /etc/service/docker/run
 
 # \DOCKERCEPTION
 
 # Replace 1000 with your user / group id
-RUN export uid=1000 gid=1000 && \
-    mkdir -p /home/developer && \
-    echo "developer:x:${uid}:${gid}:developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
-    echo "developer:x:${uid}:" >> /etc/group && \
-    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
-    chmod 0440 /etc/sudoers.d/developer && \
-    chown ${uid}:${gid} -R /home/developer
+RUN export uid=1000 gid=1000 my_user=developer&& \
+    mkdir -p /home/${my_user} && \
+    echo "${my_user}:x:${uid}:${gid}:${my_user},,,:/home/${my_user}:/bin/bash" >> /etc/passwd && \
+    echo "${my_user}:x:${uid}:" >> /etc/group && \
+    echo "${my_user} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${my_user} && \
+    chmod 0440 /etc/sudoers.d/${my_user} && \
+    chown ${uid}:${gid} -R /home/${my_user}
 
 USER developer
 
-# ADD SSH PUBLIC KEY TO DEVELOPER
-ADD authorized_keys /home/developer/.ssh/authorized_keys
+# Install the magic wrapper.
+ADD wrapdocker /usr/local/bin/wrapdocker
+RUN sudo chmod +x /usr/local/bin/wrapdocker
+ADD run /etc/service/docker/run
+RUN sudo chmod +x /etc/service/docker/run
 
 ENV HOME /home/developer
+
+# ADD SSH PUBLIC KEY TO DEVELOPER
+ADD authorized_keys /home/developer/.ssh/authorized_keys
+# ADD SSH PUBLIC KEY TO ROOT
+ADD authorized_keys /root/.ssh/authorized_keys

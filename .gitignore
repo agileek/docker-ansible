@@ -1,1 +1,3 @@
 vars.yml
+docker/Dockerfile
+docker/authorized_keys

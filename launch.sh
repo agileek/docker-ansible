@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+RUN_DIR=$(dirname $(readlink -f "$0"))
+
+cd "$RUN_DIR"
+
 function check_usage_min_max() {
         argc=${1}
         min_expected=${2}
@@ -13,8 +17,10 @@ function check_usage_min_max() {
         fi
 }
 
+check_usage_min_max $# 1 1 "USAGE ./launch.sh path_to_save_developer_home_folder (eg: ./launch.sh ~/myDeveloperHomeInDocker)"
 function launch() {
-  ansible-playbook -vvvv ansible/setup.yml --extra-vars "@vars.yml" --extra-vars "display=$DISPLAY docker_container_name=toto" -i ansible/hosts
+  local path_to_save_docker_home_folder="${1}"
+  ansible-playbook -vvvv ansible/setup.yml --extra-vars "@vars.yml" --extra-vars "path_to_save_docker_home_folder=${path_to_save_docker_home_folder} display=$DISPLAY" -i ansible/hosts
 }
 
-launch
+launch "${1}"
