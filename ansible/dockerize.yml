@@ -1,0 +1,23 @@
+---
+# First, we build a docker image with your ssh public key in root authorized keys
+- hosts: local
+  vars:
+    temporary_folder_for_building_docker: /tmp/docker
+  tasks:
+  - command: rm -rf {{ temporary_folder_for_building_docker }}
+  - file: path={{ temporary_folder_for_building_docker }}  state=directory
+  - template: src=../docker/_Dockerfile dest={{ temporary_folder_for_building_docker }}/Dockerfile
+  - shell: docker ps -a | grep developer_base_image_instance
+    register: instance_exists
+    ignore_errors: True
+  - command: docker build -t developer_base_image /tmp/docker
+    when: instance_exists|failed
+  - file: path={{ path_to_save_docker_home_folder}} state=directory
+  - docker:
+      image: developer_base_image
+      name: developer_base_image_instance
+      privileged: true
+      state: running
+      env: "DISPLAY={{ display }}"
+      ports: "{{ the_ports }}"
+      volumes: "{{ the_volumes }}"

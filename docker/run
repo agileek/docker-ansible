@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec /usr/bin/docker -d >>/var/log/docker.log 2>&1

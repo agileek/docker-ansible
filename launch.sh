@@ -17,10 +17,11 @@ function check_usage_min_max() {
         fi
 }
 
-check_usage_min_max $# 1 1 "USAGE ./launch.sh path_to_save_developer_home_folder (eg: ./launch.sh ~/myDeveloperHomeInDocker)"
+check_usage_min_max $# 1 1 "USAGE ./launch.sh path_to_save_docker_home_folder (eg: ./launch.sh ~/workspace/theHomeInDocker)"
 function launch() {
   local path_to_save_docker_home_folder="${1}"
-  ansible-playbook -vvvv ansible/setup.yml --extra-vars "@vars.yml" --extra-vars "path_to_save_docker_home_folder=${path_to_save_docker_home_folder} display=$DISPLAY" -i ansible/hosts
+  ansible-playbook -vvvv ansible/setup.yml --extra-vars "@ansible/default_volumes.yml" --extra-vars "@ansible/default_ports.yml" --extra-vars "@vars.yml" --extra-vars "internal_user=developer path_to_save_docker_home_folder=${path_to_save_docker_home_folder} display=$DISPLAY" -i ansible/hosts
 }
 
 launch "${1}"
+

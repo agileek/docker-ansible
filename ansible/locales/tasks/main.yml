@@ -1,0 +1,17 @@
+---
+- apt: pkg=locales state=latest
+- apt: pkg=language-pack-fr state=latest
+- command: /usr/sbin/update-locale creates=/etc/default/locale
+- copy: dest=/etc/locale.gen content="{{default_locale}} UTF-8" mode=0644
+  register: locale_gen
+- file: dest=/etc/default/locale state=file mode=0644
+- lineinfile: dest=/etc/default/locale regexp="^LANG=" line=LANG={{default_locale}}
+  register: lang
+- lineinfile: dest=/etc/default/locale regexp="^LANGUAGE=" line=LANGUAGE={{default_locale}}
+  register: language
+- lineinfile: dest=/etc/default/locale regexp="^LC_ALL=" line=LC_ALL={{default_locale}}
+  register: lc_all
+- command: /usr/sbin/locale-gen
+  when: locale_gen.changed or lang.changed or language.changed or lc_all.changed
+- command: /usr/sbin/update-locale
+  when: locale_gen.changed or lang.changed or language.changed or lc_all.changed

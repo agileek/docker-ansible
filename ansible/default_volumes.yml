@@ -1,0 +1,2 @@
+---
+the_volumes: [ '/usr/bin/docker:/bin/docker:rw', '/var/run/docker.sock:/run/docker.sock:rw', '/tmp/.X11-unix:/tmp/.X11-unix:rw', '{{ path_to_save_docker_home_folder}}:/home/{{ internal_user }}:rw' ]

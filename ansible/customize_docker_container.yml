@@ -1,0 +1,22 @@
+- hosts: docker_base
+  user: developer
+  sudo: yes
+  tasks:
+  - name: ensure minimal app apt dependencies are installed
+    action: apt pkg={{item}} state=latest
+    with_items:
+      - python3-software-properties
+      - software-properties-common
+      - x11-utils
+  - command: /usr/bin/add-apt-repository universe
+  - command: /usr/bin/add-apt-repository multiverse
+  - apt: update_cache=yes upgrade=dist
+#We allow X11 forwarding
+  - copy: dest=/root/.Xauthority content="" owner=root group=root mode=0600
+  roles:
+  - { role: locales, default_locale: 'fr_FR.UTF-8' }
+
+- hosts: docker_base
+  user: developer
+  tasks:
+  - template: src=templates/.bashrc dest=/home/{{ internal_user }}/.bashrc mode=0755

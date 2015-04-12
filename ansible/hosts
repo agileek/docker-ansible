@@ -1,5 +1,5 @@
 [docker_base]
-127.0.0.1
+developer_base_image_instance ansible_connection=docker-exec
 
 [local]
 local_docker_builder ansible_connection=local
