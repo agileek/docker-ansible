@@ -14,4 +14,9 @@ RUN export uid={{ uid }} gid={{ gid }} && \
     chmod 0440 /etc/sudoers.d/{{ internal_user }} && \
     chown ${uid}:${gid} -R /home/{{ internal_user }}
 
+#ADD user to docker group
+
+RUN groupadd docker -g {{ docker_gid }} && \
+	gpasswd -a {{ internal_user }} docker
+
 ENV HOME /home/{{ internal_user }}
