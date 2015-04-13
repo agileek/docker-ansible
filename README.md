@@ -38,3 +38,9 @@ If something goes wrong (Or you want to freshly restart for whatever reason), yo
 #### Misc
 
 The graphical capabilities are based on the work of http://fabiorehm.com/blog/2014/09/11/running-gui-apps-with-docker/
+
+#### Changes
+
+* 2015-04-12
+  * ssh is not needed anymore (ansible connection plugin)
+  * docker is not a dockerception, but the docker host exposed inside the container (not very secure, but this is for a development environment)
