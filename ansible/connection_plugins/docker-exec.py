@@ -61,7 +61,7 @@ class Connection(object):
             local_cmd = '%s exec -ti %s %s' % (self.cmd, self.docker_id, cmd)
         return local_cmd
 
-    def exec_command(self, cmd, tmp_path, sudo_user=None, sudoable=False, executable='/bin/sh', in_data=None, su=None, su_user=None):
+    def exec_command(self, cmd, tmp_path, sudo_user=None, become_user=None, sudoable=False, executable='/bin/sh', in_data=None, su=None, su_user=None):
         ''' run a command in the docker namespace '''
 
         if su or su_user:
