@@ -3,3 +3,13 @@ uid: 1000
 gid: 1000
 # For non root access to docker
 docker_gid: 999
+
+## Optional:
+#
+# See default_volumes.yml
+# Allow to specify custom volumes
+#the_volumes: [ '/tmp/.X11-unix:/tmp/.X11-unix:rw', '{{ path_to_save_docker_home_folder}}:/home/{{ internal_user }}:rw' ]
+#
+# See default_ports.yml
+# Allow to specify custom ports
+#the_ports:  [ '22', '3306:3306', '80:80' ]
