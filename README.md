@@ -15,6 +15,20 @@ For ubuntu, you can copy/paste
 ```
 
 ### Usage
+For DNS local settings to be automatically integrated in /etc/resolv.conf, either :
+* add a dns option cf [ansible doc](http://docs.ansible.com/docker_module.html) in `dockerize.yml` :
+```
+...
+volumes: "{{ the_volumes }}"
+dns:
+  - x.x.x.x
+  - y.y.y.y
+```
+* edit your `/etc/default/docker` file :
+```
+DOCKER_OPTS="--dns x.x.x.x --dns y.y.y.y"
+```
+
 Copy vars_example.yml in vars.yml and set the parameters
 
 Execute `./launch.sh path_to_save_docker_home_folder`
