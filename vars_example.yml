@@ -4,6 +4,7 @@ gid: 1000
 # For non root access to docker
 docker_gid: 999
 default_locale: fr_FR.UTF-8
+timezone: Europe/Paris
 ## Optional:
 #
 # See default_volumes.yml

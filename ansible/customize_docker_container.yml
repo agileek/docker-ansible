@@ -15,6 +15,7 @@
   - copy: dest=/root/.Xauthority content="" owner=root group=root mode=0600
   roles:
   - locales
+  - tz
 
 - hosts: docker_base
   user: developer
