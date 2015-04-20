@@ -20,3 +20,5 @@ RUN groupadd docker -g {{ docker_gid }} && \
 	gpasswd -a {{ internal_user }} docker
 
 ENV HOME /home/{{ internal_user }}
+ENV LANGUAGE en
+ENV LANG {{ default_locale }}

@@ -14,7 +14,7 @@
 #We allow X11 forwarding
   - copy: dest=/root/.Xauthority content="" owner=root group=root mode=0600
   roles:
-  - { role: locales, default_locale: 'fr_FR.UTF-8' }
+  - locales
 
 - hosts: docker_base
   user: developer
