@@ -19,6 +19,6 @@ RUN export uid={{ uid }} gid={{ gid }} && \
 RUN groupadd docker -g {{ docker_gid }} && \
 	gpasswd -a {{ internal_user }} docker
 
-ENV HOME /home/{{ internal_user }}
-ENV LANGUAGE en
-ENV LANG {{ default_locale }}
+ENV HOME="/home/{{ internal_user }}" \
+    LANGUAGE="en" \
+    LANG="{{ default_locale }}"
