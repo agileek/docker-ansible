@@ -1,8 +1,8 @@
-## Setup a docker with a SSH server running on a random port and customize it with ansible
+## Setup a docker container and customize it with ansible
 
 ### Prerequisites
 In order for this to work, you must have:
-* docker >= 1.5.0
+* docker >= 1.10.0
 * ansible >= 1.9
 * python-jinja2
 * python-yaml
